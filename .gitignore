@@ -1,0 +1,8 @@
+external/
+deployment/
+
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+results/
