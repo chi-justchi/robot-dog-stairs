@@ -1,0 +1,21 @@
+integrate the sensors (lidar and ...)
+- check: realsense
+
+
+human follow
+- which one (assuming there is only 1 person)
+- already integrated (just implement into our code)
+
+detect and climb stairs
+- research which algo to implement 
+- 
+
+2 robot-learning vs unitree rl
+
+rl_sar; simluation verification, real deployment
+robot-learning 
+unitree rl 
+
+Go2: already know how to run Go2 policies 
+
+- Neither is vision first 
