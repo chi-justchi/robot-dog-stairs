@@ -19,3 +19,17 @@ unitree rl
 Go2: already know how to run Go2 policies 
 
 - Neither is vision first 
+
+###########################
+
+will need to update the stairs from 
+C:\Users\wadith.USFAAD-2G3S7J4\miniconda3\envs\unitree-mjlab\lib\site-packages\mjlab\terrains\config.py
+
+Baseline: python scripts/train.py Unitree-Go2-Stairs --env.scene.num-envs 1024 --agent.max-iterations 1000
+Longer training did not solve the problem: python scripts/train.py Unitree-Go2-Stairs --env.scene.num-envs 2048 --agent.max-iterations 3000
+
+fine tuning:
+python scripts/train.py Unitree-Go2-Stairs `
+  --env.scene.num-envs 2048 `
+  --agent.max-iterations 3000 `
+  --agent.load-checkpoint .\logs\rsl_rl\go2_velocity\2026-06-24_11-33-29\model_4500.pt
