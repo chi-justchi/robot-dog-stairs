@@ -21,15 +21,57 @@ Go2: already know how to run Go2 policies
 - Neither is vision first 
 
 ###########################
-
-will need to update the stairs from 
-C:\Users\wadith.USFAAD-2G3S7J4\miniconda3\envs\unitree-mjlab\lib\site-packages\mjlab\terrains\config.py
-
-Baseline: python scripts/train.py Unitree-Go2-Stairs --env.scene.num-envs 1024 --agent.max-iterations 1000
-Longer training did not solve the problem: python scripts/train.py Unitree-Go2-Stairs --env.scene.num-envs 2048 --agent.max-iterations 3000
-
 fine tuning:
 python scripts/train.py Unitree-Go2-Stairs `
   --env.scene.num-envs 2048 `
   --agent.max-iterations 3000 `
   --agent.load-checkpoint .\logs\rsl_rl\go2_velocity\2026-06-24_11-33-29\model_4500.pt
+
+run
+ python scripts/play.py Unitree-Go2-Stairs `
+>>   --agent trained `
+>>   --checkpoint-file .\logs\rsl_rl\go2_velocity\2026-06-29_16-42-41_stairs_stage1_0p00_0p05\model_11999.pt `
+>>   --num-envs 1 
+
+
+#########
+Training plan
+
+Stage 1: tiny stairs
+step_height_range = (0.0, 0.05)
+lin_vel_x = 0.1–0.4
+lin_vel_y = 0
+ang_vel_z = 0
+
+Train from scratch:
+python scripts/train.py Unitree-Go2-Stairs --env.scene.num-envs 2048 --agent.max-iterations 12000 --agent.run-name stairs_stage1_0p00_0p05
+
+Stage 2: low stairs
+Change:
+step_height_range = (0.05, 0.08)
+
+Resume from best Stage 1 checkpoint:
+python scripts/train.py Unitree-Go2-Stairs --env.scene.num-envs 2048 --agent.max-iterations 12000 --agent.resume true --agent.load-run <STAGE1_RUN_FOLDER> --agent.load-checkpoint model_<BEST>.pt --agent.run-name stairs_stage2_0p05_0p08
+
+Stage 3: medium stairs
+step_height_range = (0.08, 0.12)
+Resume from Stage 2.
+
+Stage 4: harder stairs
+step_height_range = (0.12, 0.16)
+
+Allow small yaw:
+ang_vel_z = (-0.2, 0.2)
+Stage 5: target stairs
+step_height_range = (0.16, 0.20)
+lin_vel_x = (0.1, 0.8)
+lin_vel_y = (-0.1, 0.1)
+ang_vel_z = (-0.3, 0.3)
+Important
+
+Use this only when resuming:
+
+--agent.resume true --agent.load-run <RUN_FOLDER> --agent.load-checkpoint model_xxxx.pt
+
+##############
+ran until phase 2, then had problem, then fixed

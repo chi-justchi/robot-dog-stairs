@@ -1,0 +1,15 @@
+C:\Users\wadith.USFAAD-2G3S7J4\Documents\chivo\robot-dog-stairs\external\unitree_rl_mjlab\src\tasks\velocity\mdp\rewards.py:376: 
+RuntimeWarning: get_terrain_height_at_foot_positions: falling back to env_origins[:, 2]. 
+This is the tile origin z, not the height under each foot — clearance will be wrong wherever terrain height varies within a tile (e.g. stairs).Expose height_field_raw + horizontal_scale on your terrain entity. 
+terrain_z = get_terrain_height_at_foot_positions(env, foot_xy) # [B, N]
+
+It means your terrain-relative feet_clearance is still not truly working on stairs. Training can continue, but the foot-clearance reward is not accurate. 
+The robot may still learn from other rewards, but for better stair learning, you need to expose/query real terrain height under each foot.
+
+Fix: Use the height scan point closest to each foot, or at least use the terrain scan around the base as an estimate. But the cleaner version is: add a dedicated foot raycast sensor that casts downward from each foot.
+
+mjlab terrain is not a heightfield raster. It generates terrain as actual MuJoCo geometry, so your old fallback chain looking for height_field_raw, horizontal_scale, etc. will not work. The uploaded investigation shows TerrainEntity only exposes things like env_origins, terrain_origins, and flat_patches, not a real height-query API.
+
+So the correct long-term fix is:
+
+Use raycasting against the real MuJoCo terrain geometry.
