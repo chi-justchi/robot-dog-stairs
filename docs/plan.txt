@@ -28,10 +28,10 @@ python scripts/train.py Unitree-Go2-Stairs `
   --agent.load-checkpoint .\logs\rsl_rl\go2_velocity\2026-06-24_11-33-29\model_4500.pt
 
 run
- python scripts/play.py Unitree-Go2-Stairs `
->>   --agent trained `
->>   --checkpoint-file .\logs\rsl_rl\go2_velocity\2026-06-29_16-42-41_stairs_stage1_0p00_0p05\model_11999.pt `
->>   --num-envs 1 
+python scripts/play.py Unitree-Go2-Stairs `
+   --agent trained `
+   --checkpoint-file .\logs\rsl_rl\go2_velocity\2026-06-29_16-42-41_stairs_stage1_0p00_0p05\model_11999.pt `
+   --num-envs 1 
 
 
 #########

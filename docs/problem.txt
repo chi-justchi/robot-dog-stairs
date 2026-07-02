@@ -13,3 +13,88 @@ mjlab terrain is not a heightfield raster. It generates terrain as actual MuJoCo
 So the correct long-term fix is:
 
 Use raycasting against the real MuJoCo terrain geometry.
+
+
+
+#### refine phase 3:
+Reason: oh wait one more thing, compared to the first training, now the dog robot walk not as smooth, there 4 legs looks like not cooperating with each other as it was, i mean it can still working but the rythm is weird maybe it was the problem you stated?: Velocity tracking degraded
+
+Stage 1:
+
+error_vel_xy: 0.5982
+
+Stage 3:
+
+0.9263
+
+Yaw:
+
+1.0091
+
+This is significantly worse.
+
+The robot is basically saying:
+
+"I know how to survive and climb stairs, but I am not very good at following commands anymore."
+
+This often happens on stairs.
+
+The policy starts prioritizing:
+
+don't fall
+clear steps
+stay balanced
+
+and only then:
+
+obey velocity commands
+Action rate penalty increased
+
+Stage 1:
+
+action_rate_l2: -1.7783
+
+Stage 3:
+
+-2.0717
+
+This means:
+
+the policy is moving joints more aggressively.
+
+This is not necessarily bad.
+
+Stairs require:
+
+lifting
+searching
+correcting footholds
+pushing upward
+
+All of these need more aggressive motions.
+
+cfg.rewards["foot_gait"].weight = 0.8      # from 0.5
+cfg.rewards["action_rate_l2"].weight = -0.08  # from -0.05
+cfg.rewards["foot_slip"].weight = -0.35    # from -0.25
+
+twist_cmd.ranges.lin_vel_x = (0.1, 0.5)
+twist_cmd.ranges.lin_vel_y = (-0.05, 0.05)
+twist_cmd.ranges.ang_vel_z = (-0.05, 0.05)
+
+######## refine phase 3: rear leg, 
+We adjust and it was worst
+
+########## refine phase 3: rear leg 2nd time:
+# keep same stair height
+step_height_range = (0.08, 0.12)
+
+# slow and straight
+twist_cmd.ranges.lin_vel_x = (0.08, 0.40)
+twist_cmd.ranges.lin_vel_y = (0.0, 0.0)
+twist_cmd.ranges.ang_vel_z = (0.0, 0.0)
+
+# reward tuning
+cfg.rewards["foot_clearance"].params["target_height"] = 0.14
+cfg.rewards["foot_clearance"].weight = -0.7
+cfg.rewards["foot_gait"].weight = 0.7
+cfg.rewards["action_rate_l2"].weight = -0.06
